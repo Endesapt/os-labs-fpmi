@@ -12,7 +12,9 @@ void printBinaryFile(const string& filename) {
 }
 
 void runProcess(const string& exeName, const string& args) {
-    STARTUPINFO si = { sizeof(si) };
+    STARTUPINFO si;
+    ZeroMemory(&si, sizeof(STARTUPINFO));
+    si.cb = sizeof(STARTUPINFO);
     PROCESS_INFORMATION pi;
     std::string cmdStr = exeName +" "+args;
     char* cmd=&cmdStr[0];
