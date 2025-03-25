@@ -22,11 +22,11 @@ describe('ArrayProcessor', () => {
 
     it('должен правильно обрабатывать массивы с разными типами данных', () => {
       expect(
-        ArrayProcessor.removeDuplicates([1, '1', true, 1, true, '1'])
+        ArrayProcessor.removeDuplicates([1, '1', true, 1, true, '1']),
       ).toEqual([1, '1', true]);
-      
+
       expect(
-        ArrayProcessor.removeDuplicates([null, undefined, false, 0, '', null, undefined])
+        ArrayProcessor.removeDuplicates([null, undefined, false, 0, '', null, undefined]),
       ).toEqual([null, undefined, false, 0, '']);
     });
 
@@ -34,18 +34,18 @@ describe('ArrayProcessor', () => {
       const obj1 = { a: 1 };
       const obj2 = { a: 1 }; // Одинаковое содержимое с obj1
       const obj3 = { b: 2 };
-      
+
       const input = [obj1, obj2, obj3, { a: 1 }];
       const result = ArrayProcessor.removeDuplicates(input);
-      
-      expect(result.length).toBe(2);
+
+      expect(result).toHaveLength(2);
       expect(result[0]).toEqual({ a: 1 });
       expect(result[1]).toEqual({ b: 2 });
     });
 
     it('должен правильно обрабатывать массивы массивов', () => {
       expect(
-        ArrayProcessor.removeDuplicates([[1, 2], [3, 4], [1, 2], [5, 6]])
+        ArrayProcessor.removeDuplicates([[1, 2], [3, 4], [1, 2], [5, 6]]),
       ).toEqual([[1, 2], [3, 4], [5, 6]]);
     });
 
@@ -53,9 +53,9 @@ describe('ArrayProcessor', () => {
       const date1 = new Date('2023-01-01');
       const date2 = new Date('2023-01-01'); // Та же дата
       const date3 = new Date('2023-02-01');
-      
+
       const result = ArrayProcessor.removeDuplicates([date1, date2, date3]);
-      expect(result.length).toBe(2);
+      expect(result).toHaveLength(2);
       expect(result[0]).toEqual(date1);
       expect(result[1]).toEqual(date3);
     });
@@ -64,15 +64,15 @@ describe('ArrayProcessor', () => {
       expect(() => {
         ArrayProcessor.removeDuplicates('не массив');
       }).toThrow(TypeError);
-      
+
       expect(() => {
         ArrayProcessor.removeDuplicates(123);
       }).toThrow(TypeError);
-      
+
       expect(() => {
         ArrayProcessor.removeDuplicates(null);
       }).toThrow(TypeError);
-      
+
       expect(() => {
         ArrayProcessor.removeDuplicates(undefined);
       }).toThrow(TypeError);

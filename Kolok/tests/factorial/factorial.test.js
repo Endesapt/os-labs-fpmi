@@ -28,22 +28,22 @@ describe('FactorialGenerator', () => {
   describe('generateFactorials', () => {
     it('должен возвращать пустой массив для n = 0', () => {
       const result = FactorialGenerator.generateFactorials(0);
-      expect(result.length).toBe(0);
+      expect(result).toHaveLength(0);
       expect(result).toEqual([]);
     });
 
     it('должен правильно генерировать массив первых n факториалов', () => {
       const result1 = FactorialGenerator.generateFactorials(1);
-      expect(result1.length).toBe(1);
-      expect(result1.map(n => n.toString())).toEqual(['1']);
+      expect(result1).toHaveLength(1);
+      expect(result1.map((n) => n.toString())).toEqual(['1']);
 
       const result5 = FactorialGenerator.generateFactorials(5);
-      expect(result5.length).toBe(5);
-      expect(result5.map(n => n.toString())).toEqual(['1', '1', '2', '6', '24']);
+      expect(result5).toHaveLength(5);
+      expect(result5.map((n) => n.toString())).toEqual(['1', '1', '2', '6', '24']);
 
       const result6 = FactorialGenerator.generateFactorials(6);
-      expect(result6.length).toBe(6);
-      expect(result6.map(n => n.toString())).toEqual(['1', '1', '2', '6', '24', '120']);
+      expect(result6).toHaveLength(6);
+      expect(result6.map((n) => n.toString())).toEqual(['1', '1', '2', '6', '24', '120']);
     });
 
     it('должен выбрасывать ошибку для отрицательного n', () => {

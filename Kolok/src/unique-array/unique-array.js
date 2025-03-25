@@ -50,7 +50,7 @@ class ArrayProcessor {
     if (value === null || value === undefined || typeof value !== 'object') {
       return `${typeof value}:${String(value)}`;
     }
-    
+
     // Для объектов используем JSON.stringify для сравнения по содержимому
     // Пытаемся сделать глубокое сравнение, но учитываем циклические ссылки
     try {
@@ -58,11 +58,11 @@ class ArrayProcessor {
       if (value instanceof Date) {
         return `date:${value.getTime()}`;
       }
-      
+
       // Для других объектов используем JSON сериализацию
       return JSON.stringify(value);
     } catch (error) {
-      // В случае ошибки (например, циклические ссылки) 
+      // В случае ошибки (например, циклические ссылки)
       // используем уникальный идентификатор объекта
       return `obj:${Object.keys(value).sort().join(',')}`;
     }

@@ -12,7 +12,7 @@ try {
   console.log(`1! = ${FactorialGenerator.calculateFactorial(1)}`);
   console.log(`5! = ${FactorialGenerator.calculateFactorial(5)}`);
   console.log(`10! = ${FactorialGenerator.calculateFactorial(10)}`);
-  
+
   // Большое число
   const bigFactorial = FactorialGenerator.calculateFactorial(30);
   console.log(`30! = ${bigFactorial}`);
@@ -25,9 +25,9 @@ console.log('\nПример 2: Генерация массива фактори�
 try {
   const n = 10;
   console.log(`Генерация первых ${n} факториалов:`);
-  
+
   const factorials = FactorialGenerator.generateFactorials(n);
-  
+
   // Вывод результатов
   for (let i = 0; i < factorials.length; i++) {
     console.log(`${i}! = ${factorials[i].toString()}`);

@@ -10,10 +10,10 @@ console.log('\nПример 1: Удаление дубликатов из мас
 try {
   const originalArray = [1, 2, 3, 2, 4, 1, 5, 6, 5, 7];
   console.log('Исходный массив:', originalArray);
-  
+
   const uniqueArray = ArrayProcessor.removeDuplicates(originalArray);
   console.log('Массив без дубликатов:', uniqueArray);
-  
+
   // Проверка, что исходный массив не изменен
   console.log('Исходный массив остался без изменений:', originalArray);
 } catch (error) {
@@ -25,7 +25,7 @@ console.log('\nПример 2: Удаление дубликатов из мас
 try {
   const stringArray = ['apple', 'banana', 'apple', 'orange', 'banana', 'grape'];
   console.log('Исходный массив строк:', stringArray);
-  
+
   const uniqueStrings = ArrayProcessor.removeDuplicates(stringArray);
   console.log('Массив строк без дубликатов:', uniqueStrings);
 } catch (error) {
@@ -40,15 +40,15 @@ try {
     { id: 2, name: 'Item 2' },
     { id: 1, name: 'Item 1' }, // Дубликат
     { id: 3, name: 'Item 3' },
-    { id: 2, name: 'Item 2' }  // Дубликат
+    { id: 2, name: 'Item 2' }, // Дубликат
   ];
-  
+
   console.log('Исходный массив объектов:');
-  objectsArray.forEach(obj => console.log(obj));
-  
+  objectsArray.forEach((obj) => console.log(obj));
+
   const uniqueObjects = ArrayProcessor.removeDuplicates(objectsArray);
   console.log('\nМассив объектов без дубликатов:');
-  uniqueObjects.forEach(obj => console.log(obj));
+  uniqueObjects.forEach((obj) => console.log(obj));
 } catch (error) {
   console.error('Произошла ошибка:', error.message);
 }
@@ -58,7 +58,7 @@ console.log('\nПример 4: Удаление дубликатов из мас
 try {
   const mixedArray = [1, '1', true, null, 1, true, '1', null, undefined, 0, false, undefined];
   console.log('Исходный смешанный массив:', mixedArray);
-  
+
   const uniqueMixed = ArrayProcessor.removeDuplicates(mixedArray);
   console.log('Смешанный массив без дубликатов:', uniqueMixed);
 } catch (error) {
