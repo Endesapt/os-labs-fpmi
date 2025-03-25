@@ -1,6 +1,5 @@
-#include <gtest/gtest.h>
-#include <vector>
 #include "thread_functions.h"
+#include <gtest/gtest.h>
 
 // Test for MinMaxThreadFunc
 TEST(ThreadFunctionsTest, MinMaxThreadFuncTest) {

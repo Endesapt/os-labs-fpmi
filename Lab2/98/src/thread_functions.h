@@ -2,6 +2,7 @@
 
 #include <windows.h>
 #include <vector>
+#include <iostream>
 
 /**
  * Structure to pass data between threads.

@@ -1,6 +1,8 @@
 #include "thread_functions.h"
-#include <iostream>
-
+/*
+*   
+    @param LVOID lParam параметр
+*/
 DWORD WINAPI MinMaxThreadFunc(LPVOID lpParam) {
     ThreadData* data = static_cast<ThreadData*>(lpParam);
     std::vector<int>& array = *(data->array);
