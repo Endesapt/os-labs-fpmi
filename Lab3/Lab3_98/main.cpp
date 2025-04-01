@@ -8,127 +8,127 @@
 
 
 int main() {
-        int arraySize;
-    std::cout << "Enter array size: ";
-    std::cin >> arraySize;
+	int arraySize;
+	std::cout << "Enter array size: ";
+	std::cin >> arraySize;
 
-        int* array = new int[arraySize]();
+	int* array = new int[arraySize]();
 
-        int numThreads;
-    std::cout << "Enter number of marker threads: ";
-    std::cin >> numThreads;
+	int numThreads;
+	std::cout << "Enter number of marker threads: ";
+	std::cin >> numThreads;
 
-        CRITICAL_SECTION arrayCritSection;
-    InitializeCriticalSection(&arrayCritSection);
+	CRITICAL_SECTION arrayCritSection;
+	InitializeCriticalSection(&arrayCritSection);
 
-        HANDLE startEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-    HANDLE* cannotContinueEvents = new HANDLE[numThreads];
-    HANDLE* continueOrTerminateEvents = new HANDLE[numThreads];
-    HANDLE* terminateEvents = new HANDLE[numThreads];
-    HANDLE* threadHandles = new HANDLE[numThreads];
+	HANDLE startEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+	HANDLE* cannotContinueEvents = new HANDLE[numThreads];
+	HANDLE* continueOrTerminateEvents = new HANDLE[numThreads];
+	HANDLE* terminateEvents = new HANDLE[numThreads];
+	HANDLE* threadHandles = new HANDLE[numThreads];
 
-        std::vector<int>* markedElements = new std::vector<int>[numThreads];
+	std::vector<int>* markedElements = new std::vector<int>[numThreads];
 
-        for (int i = 0; i < numThreads; i++) {
-        cannotContinueEvents[i] = CreateEvent(NULL, FALSE, FALSE, NULL);
-        continueOrTerminateEvents[i] = CreateEvent(NULL, FALSE, FALSE, NULL);
-        terminateEvents[i] = CreateEvent(NULL, FALSE, FALSE, NULL);
+	for (int i = 0; i < numThreads; i++) {
+		cannotContinueEvents[i] = CreateEvent(NULL, FALSE, FALSE, NULL);
+		continueOrTerminateEvents[i] = CreateEvent(NULL, FALSE, FALSE, NULL);
+		terminateEvents[i] = CreateEvent(NULL, FALSE, FALSE, NULL);
 
-        ThreadData* data = new ThreadData;
-        data->id = i + 1;
-        data->array = array;
-        data->arraySize = arraySize;
-        data->startEvent = startEvent;
-        data->cannotContinueEvents = cannotContinueEvents;
-        data->continueOrTerminateEvents = continueOrTerminateEvents;
-        data->terminateEvents = terminateEvents;
-        data->arrayCritSection = &arrayCritSection;
-        data->numThreads = numThreads;
-        data->markedElements = markedElements;
+		ThreadData* data = new ThreadData;
+		data->id = i + 1;
+		data->array = array;
+		data->arraySize = arraySize;
+		data->startEvent = startEvent;
+		data->cannotContinueEvents = cannotContinueEvents;
+		data->continueOrTerminateEvents = continueOrTerminateEvents;
+		data->terminateEvents = terminateEvents;
+		data->arrayCritSection = &arrayCritSection;
+		data->numThreads = numThreads;
+		data->markedElements = markedElements;
 
-        threadHandles[i] = CreateThread(NULL, 0, MarkerThread, data, 0, NULL);
-    }
+		threadHandles[i] = CreateThread(NULL, 0, MarkerThread, data, 0, NULL);
+	}
 
-        SetEvent(startEvent);
+	SetEvent(startEvent);
 
-        bool* activeThreadFlags = new bool[numThreads];
-    for (int i = 0; i < numThreads; i++) {
-        activeThreadFlags[i] = true;
-    }
-    int activeThreadsCount = numThreads;
+	bool* activeThreadFlags = new bool[numThreads];
+	for (int i = 0; i < numThreads; i++) {
+		activeThreadFlags[i] = true;
+	}
+	int activeThreadsCount = numThreads;
 
-    while (activeThreadsCount > 0) {
-                HANDLE* activeEvents = new HANDLE[activeThreadsCount];
-        int activeIndex = 0;
+	while (activeThreadsCount > 0) {
+		HANDLE* activeEvents = new HANDLE[activeThreadsCount];
+		int activeIndex = 0;
 
-                for (int i = 0; i < numThreads; i++) {
-            if (activeThreadFlags[i]) {
-                activeEvents[activeIndex++] = cannotContinueEvents[i];
-            }
-        }
+		for (int i = 0; i < numThreads; i++) {
+			if (activeThreadFlags[i]) {
+				activeEvents[activeIndex++] = cannotContinueEvents[i];
+			}
+		}
 
-                WaitForMultipleObjects(activeThreadsCount, activeEvents, TRUE, INFINITE);
-        delete[] activeEvents;
+		WaitForMultipleObjects(activeThreadsCount, activeEvents, TRUE, INFINITE);
+		delete[] activeEvents;
 
-                std::cout << "Array: ";
-        for (int i = 0; i < arraySize; i++) {
-            std::cout << array[i] << " ";
-        }
-        std::cout << std::endl;
+		std::cout << "Array: ";
+		for (int i = 0; i < arraySize; i++) {
+			std::cout << array[i] << " ";
+		}
+		std::cout << std::endl;
 
-                int threadToTerminate;
-        std::cout << "Enter marker thread number to terminate (1-" << numThreads << "): ";
-        std::cin >> threadToTerminate;
+		int threadToTerminate;
+		std::cout << "Enter marker thread number to terminate (1-" << numThreads << "): ";
+		std::cin >> threadToTerminate;
 
-        if (threadToTerminate < 1 || threadToTerminate > numThreads) {
-            std::cout << "Invalid thread number" << std::endl;
-        }
-        else if (!activeThreadFlags[threadToTerminate - 1]) {
-            std::cout << "Thread " << threadToTerminate << " is already terminated" << std::endl;
-        }
-        else {
-                        SetEvent(terminateEvents[threadToTerminate - 1]);
-            SetEvent(continueOrTerminateEvents[threadToTerminate - 1]);
+		if (threadToTerminate < 1 || threadToTerminate > numThreads) {
+			std::cout << "Invalid thread number" << std::endl;
+		}
+		else if (!activeThreadFlags[threadToTerminate - 1]) {
+			std::cout << "Thread " << threadToTerminate << " is already terminated" << std::endl;
+		}
+		else {
+			SetEvent(terminateEvents[threadToTerminate - 1]);
+			SetEvent(continueOrTerminateEvents[threadToTerminate - 1]);
 
-                        WaitForSingleObject(threadHandles[threadToTerminate - 1], INFINITE);
-            CloseHandle(threadHandles[threadToTerminate - 1]);
+			WaitForSingleObject(threadHandles[threadToTerminate - 1], INFINITE);
+			CloseHandle(threadHandles[threadToTerminate - 1]);
 
-                        activeThreadFlags[threadToTerminate - 1] = false;
-            activeThreadsCount--;
-        }
+			activeThreadFlags[threadToTerminate - 1] = false;
+			activeThreadsCount--;
+		}
 
 
 
-                std::cout << "Array after thread termination: ";
-        for (int i = 0; i < arraySize; i++) {
-            std::cout << array[i] << " ";
-        }
-        std::cout << std::endl;
+		std::cout << "Array after thread termination: ";
+		for (int i = 0; i < arraySize; i++) {
+			std::cout << array[i] << " ";
+		}
+		std::cout << std::endl;
 
-                for (int i = 0; i < numThreads; i++) {
-            if (activeThreadFlags[i]) {
-                SetEvent(continueOrTerminateEvents[i]);
-            }
-        }
-    }
+		for (int i = 0; i < numThreads; i++) {
+			if (activeThreadFlags[i]) {
+				SetEvent(continueOrTerminateEvents[i]);
+			}
+		}
+	}
 
-        DeleteCriticalSection(&arrayCritSection);
-    CloseHandle(startEvent);
+	DeleteCriticalSection(&arrayCritSection);
+	CloseHandle(startEvent);
 
-    for (int i = 0; i < numThreads; i++) {
-        CloseHandle(cannotContinueEvents[i]);
-        CloseHandle(continueOrTerminateEvents[i]);
-        CloseHandle(terminateEvents[i]);
-    }
+	for (int i = 0; i < numThreads; i++) {
+		CloseHandle(cannotContinueEvents[i]);
+		CloseHandle(continueOrTerminateEvents[i]);
+		CloseHandle(terminateEvents[i]);
+	}
 
-    delete[] array;
-    delete[] cannotContinueEvents;
-    delete[] continueOrTerminateEvents;
-    delete[] terminateEvents;
-    delete[] threadHandles;
-    delete[] markedElements;
-    delete[] activeThreadFlags;
+	delete[] array;
+	delete[] cannotContinueEvents;
+	delete[] continueOrTerminateEvents;
+	delete[] terminateEvents;
+	delete[] threadHandles;
+	delete[] markedElements;
+	delete[] activeThreadFlags;
 
-    std::cout << "All threads terminated. Program finished." << std::endl;
-    return 0;
+	std::cout << "All threads terminated. Program finished." << std::endl;
+	return 0;
 }
