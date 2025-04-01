@@ -12,7 +12,10 @@ endif()
 project ("Lab3_98")
 
 # Добавьте источник в исполняемый файл этого проекта.
-add_executable (Lab3_98 "main.cpp" )
+add_executable (Lab3_98 "main.cpp" "Thread.h")
+
+
+add_executable (Lab3_98_Test "tests.cpp" "Thread.h")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Lab3_98 PROPERTY CXX_STANDARD 98)

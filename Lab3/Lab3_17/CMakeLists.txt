@@ -12,7 +12,9 @@ endif()
 project ("Lab3_17")
 
 # Добавьте источник в исполняемый файл этого проекта.
-add_executable (Lab3_17 "main.cpp" )
+add_executable (Lab3_17 "main.cpp"  )
+
+add_executable(Lab3_17_Test "tests.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Lab3_17 PROPERTY CXX_STANDARD 17)
