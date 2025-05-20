@@ -138,7 +138,8 @@ int main() {
 			PrintError("Failed to create sender ready event.");
 			for (int j = 0; j < i; ++j) {
 				CloseHandle(senderReadyEventHandles[j]);
-				TerminateProcess(pi[j].hProcess, 1);                  CloseHandle(pi[j].hProcess);
+				TerminateProcess(pi[j].hProcess, 1);                  
+				CloseHandle(pi[j].hProcess);
 				CloseHandle(pi[j].hThread);
 			}
 			CloseHandle(hSemaphoreFull);
@@ -148,12 +149,15 @@ int main() {
 			return 1;
 		}
 		delete[] cmdLineCstr;
-		senderProcessHandles[i] = pi[i].hProcess;          CloseHandle(pi[i].hThread);          std::cout << "Sender process " << i << " launched." << std::endl;
+		senderProcessHandles[i] = pi[i].hProcess;          
+		CloseHandle(pi[i].hThread);          
+		std::cout << "Sender process " << i << " launched." << std::endl;
 	}
 
 	std::cout << "Waiting for all Senders to be ready..." << std::endl;
 	if (numSenders > 0) {
-		DWORD waitResult = WaitForMultipleObjects(numSenders, &senderReadyEventHandles[0], TRUE, INFINITE);          if (waitResult >= WAIT_OBJECT_0 && waitResult < WAIT_OBJECT_0 + numSenders) {
+		DWORD waitResult = WaitForMultipleObjects(numSenders, &senderReadyEventHandles[0], TRUE, INFINITE);          
+		if (waitResult >= WAIT_OBJECT_0 && waitResult < WAIT_OBJECT_0 + numSenders) {
 			std::cout << "All Senders are ready." << std::endl;
 		}
 		else {
