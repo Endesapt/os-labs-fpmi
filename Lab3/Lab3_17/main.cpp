@@ -122,39 +122,43 @@ int main() {
 		}
 		std::cout << std::endl;
 
-		int threadToTerminate;
-		std::cout << "Enter marker thread number to terminate (1-" << numThreads << "): ";
-		std::cin >> threadToTerminate;
+		while (true) {
+			int threadToTerminate;
+			std::cout << "Enter marker thread number to terminate (1-" << numThreads << "): ";
+			std::cin >> threadToTerminate;
 
-		bool terminatedThread = false;
+			bool terminatedThread = false;
 
-		if (threadToTerminate < 1 || threadToTerminate > numThreads) {
-			std::cout << "Invalid thread number" << std::endl;
-		}
-		else if (!activeThreads[threadToTerminate - 1]) {
-			std::cout << "Thread " << threadToTerminate << " is already terminated" << std::endl;
-		}
-		else {
-			{
-				std::lock_guard<std::mutex> lock(continueMutex);
-				terminateFlags[threadToTerminate - 1] = true;
-				continueFlags[threadToTerminate - 1] = true;
+			if (threadToTerminate < 1 || threadToTerminate > numThreads) {
+				std::cout << "Invalid thread number" << std::endl;
 			}
-			continueCv.notify_all();
-
-			threads[threadToTerminate - 1].join();
-
-			activeThreads[threadToTerminate - 1] = false;
-			activeThreadCount--;
-			terminatedThread = true;
-		}
-
-		if (terminatedThread) {
-			std::cout << "Array after thread termination: ";
-			for (int value : array) {
-				std::cout << value << " ";
+			else if (!activeThreads[threadToTerminate - 1]) {
+				std::cout << "Thread " << threadToTerminate << " is already terminated" << std::endl;
 			}
-			std::cout << std::endl;
+			else {
+				{
+					std::lock_guard<std::mutex> lock(continueMutex);
+					terminateFlags[threadToTerminate - 1] = true;
+					continueFlags[threadToTerminate - 1] = true;
+				}
+				continueCv.notify_all();
+
+				threads[threadToTerminate - 1].join();
+
+				activeThreads[threadToTerminate - 1] = false;
+				activeThreadCount--;
+				terminatedThread = true;
+			}
+
+
+			if (terminatedThread) {
+				std::cout << "Array after thread termination: ";
+				for (int value : array) {
+					std::cout << value << " ";
+				}
+				std::cout << std::endl;
+				break;
+			}
 		}
 
 		threadsAtBarrier = 0;

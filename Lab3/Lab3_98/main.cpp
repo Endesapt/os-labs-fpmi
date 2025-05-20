@@ -8,6 +8,7 @@
 
 
 int main() {
+	
 	int arraySize;
 	std::cout << "Enter array size: ";
 	std::cin >> arraySize;
@@ -19,6 +20,8 @@ int main() {
 	std::cin >> numThreads;
 
 	CRITICAL_SECTION arrayCritSection;
+	CRITICAL_SECTION consoleCritSection;
+	InitializeCriticalSection(&consoleCritSection);
 	InitializeCriticalSection(&arrayCritSection);
 
 	HANDLE startEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
@@ -45,6 +48,7 @@ int main() {
 		data->arrayCritSection = &arrayCritSection;
 		data->numThreads = numThreads;
 		data->markedElements = markedElements;
+		data->consoleCritSection = &consoleCritSection;
 
 		threadHandles[i] = CreateThread(NULL, 0, MarkerThread, data, 0, NULL);
 	}
@@ -69,32 +73,35 @@ int main() {
 
 		WaitForMultipleObjects(activeThreadsCount, activeEvents, TRUE, INFINITE);
 		delete[] activeEvents;
-
 		std::cout << "Array: ";
 		for (int i = 0; i < arraySize; i++) {
 			std::cout << array[i] << " ";
 		}
 		std::cout << std::endl;
+		
+		while (true) {
+			int threadToTerminate;
+			std::cout << "Enter marker thread number to terminate (1-" << numThreads << "): ";
+			std::cin >> threadToTerminate;
 
-		int threadToTerminate;
-		std::cout << "Enter marker thread number to terminate (1-" << numThreads << "): ";
-		std::cin >> threadToTerminate;
 
-		if (threadToTerminate < 1 || threadToTerminate > numThreads) {
-			std::cout << "Invalid thread number" << std::endl;
-		}
-		else if (!activeThreadFlags[threadToTerminate - 1]) {
-			std::cout << "Thread " << threadToTerminate << " is already terminated" << std::endl;
-		}
-		else {
-			SetEvent(terminateEvents[threadToTerminate - 1]);
-			SetEvent(continueOrTerminateEvents[threadToTerminate - 1]);
+			if (threadToTerminate < 1 || threadToTerminate > numThreads) {
+				std::cout << "Invalid thread number" << std::endl;
+			}
+			else if (!activeThreadFlags[threadToTerminate - 1]) {
+				std::cout << "Thread " << threadToTerminate << " is already terminated" << std::endl;
+			}
+			else {
+				SetEvent(terminateEvents[threadToTerminate - 1]);
+				SetEvent(continueOrTerminateEvents[threadToTerminate - 1]);
 
-			WaitForSingleObject(threadHandles[threadToTerminate - 1], INFINITE);
-			CloseHandle(threadHandles[threadToTerminate - 1]);
+				WaitForSingleObject(threadHandles[threadToTerminate - 1], INFINITE);
+				CloseHandle(threadHandles[threadToTerminate - 1]);
 
-			activeThreadFlags[threadToTerminate - 1] = false;
-			activeThreadsCount--;
+				activeThreadFlags[threadToTerminate - 1] = false;
+				activeThreadsCount--;
+				break;
+			}
 		}
 
 

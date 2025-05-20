@@ -10,6 +10,7 @@ struct ThreadData {
 	HANDLE* continueOrTerminateEvents;
 	HANDLE* terminateEvents;
 	CRITICAL_SECTION* arrayCritSection;
+	CRITICAL_SECTION* consoleCritSection;
 	int numThreads;
 	std::vector<int>* markedElements;
 };
@@ -39,9 +40,10 @@ DWORD WINAPI MarkerThread(LPVOID lpParam) {
 		}
 		else {
 			LeaveCriticalSection(data->arrayCritSection);
-
+			EnterCriticalSection(data->consoleCritSection);
 			std::cout << "Marker " << data->id << ": marked " << markedCount
 				<< " elements, cannot mark element with index " << randomIndex << std::endl;
+			LeaveCriticalSection(data->consoleCritSection);
 
 			SetEvent(data->cannotContinueEvents[data->id - 1]);
 
